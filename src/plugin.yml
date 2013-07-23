@@ -1,0 +1,3 @@
+name: TestChat
+main: com.github.dublekfx.TestChat.TestChat
+version: 0.1
