@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 
-import com.github.dublekfx.TestChat.PlayerRank;
 import com.github.dublekfx.TestChat.User;
 
 public class NormalChannel implements Channel	{
@@ -207,7 +206,7 @@ public class NormalChannel implements Channel	{
 
 	@Override
 	public boolean isMod(User user) {
-		if(modList.contains(user.getName()) || user.getRank().equals(PlayerRank.MOD) || user.getRank().equals(PlayerRank.ADMIN))	{
+		if(modList.contains(user.getName()) || user.getPlayer().hasPermission("group.denizen") || user.getPlayer().hasPermission("group.horrorterror"))	{
 			return true;
 		}
 		return false;

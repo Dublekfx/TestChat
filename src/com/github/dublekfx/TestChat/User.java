@@ -14,13 +14,18 @@ public class User {
 	
 	private Player pthis;
 	private String pname;
-	private PlayerRank prank;
-	//private Class, aspect, mplanet, dplanet, towernum, sleepstate, sleeploc
-	//also data for lastlogin and timeplayed
+	private String classType;
+	private String aspect;
+	private String mPlanet;
+	private String dPlanet;
+	private short towerNum;
+	private boolean sleepState;
 	private Channel current;
 	private boolean globalMute;
 	private boolean isOnline;
 	private String globalNick;
+	//also data for lastlogin and timeplayed
+	private String userIP;
 	
 	private Set<Channel> listening = new HashSet<Channel>();	//figure out how the hell to save this between runs
 		//also, do I even want/need this?
@@ -58,9 +63,6 @@ public class User {
 	public Player getPlayer()	{
 		return pthis;
 	}
-	public PlayerRank getRank()	{
-		return prank;
-	}
 	
 	public String getNick()	{
 		return globalNick;
@@ -70,6 +72,48 @@ public class User {
 		this.globalNick = newNick;
 	}
 
+	public String getClassType()	{
+		return classType;
+	}
+	public void setClassType(String type)	{
+		classType = type;
+	}
+	public String getAspect()	{
+		return aspect;
+	}
+	public void setAspect(String asp)	{
+		aspect = asp;
+	}
+	public String getMPlanet()	{
+		return mPlanet;
+	}
+	public void setMPlanet(String mediumP)	{
+		mPlanet = mediumP;
+	}
+	public String getDPlanet()	{
+		return dPlanet;
+	}
+	public void setDPlanet(String dreamP)	{
+		dPlanet = dreamP;
+	}
+	public short getTowerNum()	{
+		return towerNum;
+	}
+	public void setTowerNum(short num)	{
+		towerNum = num;
+	}
+	public boolean isSleeping()	{
+		return sleepState;
+	}
+	public void setSleeping(boolean b)	{
+		sleepState = b;
+	}
+	public String getUserIP()	{
+		return userIP;
+	}
+	public void setUserIP()	{
+		userIP = this.getPlayer().getAddress().getAddress().getHostAddress();
+	}
 	public void toggleMute()	{
 		if (this.globalMute = !this.globalMute)	{
 			this.sendMessage(ChatColor.RED + "You have been muted in all channels.");

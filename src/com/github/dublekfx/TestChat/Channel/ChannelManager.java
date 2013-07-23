@@ -41,10 +41,13 @@ public class ChannelManager {
 		//do the savey thing, john!
 	}
 	
-	public void createNewChannel()	{
+	public void createNewChannel(String name, AccessLevel sendingAccess, AccessLevel listeningAccess, String creator)	{
 		//INSERT INTO ChatChannels
 		//VALUES (values go here, from parameters)
 		//channelList.put(name, channel);
+		Channel c = new NormalChannel(name, sendingAccess, listeningAccess, creator);
+		this.channelList.put(name, c);
+		Logger.getLogger("Minecraft").info("Channel" + c.getName() + "created: " + sendingAccess + " " + listeningAccess + " " + creator);
 	}
 	public void createDefaultChannel()	{
 		Channel c = new NormalChannel("#", AccessLevel.PUBLIC, AccessLevel.PUBLIC, "Dublek");
