@@ -170,43 +170,68 @@ public class TestChat extends JavaPlugin {
 					return true;
 				}
 				if(args[0].equalsIgnoreCase("channel"))	{	//ChannelOwner/Mod commands
-					String helpmsg = ChatColor.YELLOW + "Channel Owner commands:\n" +
-							"\t/sc channel mod <add/remove> <$user>\tAdd or remove a channelMod\n" +
-							"\t/sc channel <ban/unban> <$user>\t(Un)bans a user from the channel\n" +
-							"\t/sc disband\tDisband coming soon!";
-					if(user.getCurrent().getOwner().equalsIgnoreCase(user.getName()) || isMod)	{
-						if(args.length == 1){
-							sender.sendMessage(helpmsg);
+					Channel c = user.getCurrent();
+					String helpMod = ChatColor.YELLOW + "Channel Mod commands:\n" +
+							"\t/sc channel kick <$user>\tKick a user from the channel\n" +
+							"\t/sc channel ban <$user>\tBan a user from the channel\n" +
+							"\t/sc channel setalias <$alias>\tSet an alias for the channel\n" +
+							"\t/sc channel rmalias\tRemove the channel alias\n" +
+							"\t/sc channel getListeners\tList all users currently listening to this channel";
+					if(user.getCurrent().getModList().contains(user.getName()) || isHelper)	{
+						if(args[1].equalsIgnoreCase("kick"))	{
+							c.kickUser(this.getUserManager().getUser(args[2]), user);
 							return true;
 						}
-						if(args[1].equalsIgnoreCase("mod"))	{
-							if(args[2].equalsIgnoreCase("add"))	{
-								user.getCurrent().addMod(this.getUserManager().getUser(args[3]), user);
-								return true;
-							}
-							else if (args[2].equalsIgnoreCase("remove"))	{
-								user.getCurrent().removeMod(this.getUserManager().getUser(args[3]), user);
-								return true;
-							}
-							else {
-								sender.sendMessage(helpmsg);
-								return true;
-							}
-						}
-						if(args[1].equalsIgnoreCase("unban"))	{
-							this.getChannelManager().getChannel(user.getCurrent().getName()).unbanUser(this.getUserManager().getUser(args[2]), user);
+						if(args[1].equalsIgnoreCase("ban"))	{
+							c.banUser(this.getUserManager().getUser(args[2]), user);
 							return true;
 						}
-						if(args[1].equalsIgnoreCase("disband"))	{
-							sender.sendMessage(ChatColor.YELLOW + "Command coming soon!");
+						if(args[1].equalsIgnoreCase("setalias"))	{
+							c.setAlias(args[2], user);
+						}
+						if(args[1].equalsIgnoreCase("rmalias"))	{
+							c.removeAlias(user);
+						}
+						if(args[1].equalsIgnoreCase("getlisteners"))	{
+							
+						}					
+						String helpOwner = ChatColor.YELLOW + "Channel Owner commands:\n" +
+								"\t/sc channel mod <add/remove> <$user>\tAdd or remove a channelMod\n" +
+								"\t/sc channel <ban/unban> <$user>\t(Un)bans a user from the channel\n" +
+								"\t/sc disband\tDisband coming soon!";
+						if(c.getOwner().equalsIgnoreCase(user.getName()) || isMod)	{
+							if(args.length == 1){
+								sender.sendMessage(helpOwner);
+								return true;
+							}
+							if(args[1].equalsIgnoreCase("mod"))	{
+								if(args[2].equalsIgnoreCase("add"))	{
+									c.addMod(this.getUserManager().getUser(args[3]), user);
+									return true;
+								}
+								else if (args[2].equalsIgnoreCase("remove"))	{
+									c.removeMod(this.getUserManager().getUser(args[3]), user);
+									return true;
+								}
+								else {
+									sender.sendMessage(helpOwner);
+									return true;
+								}
+							}
+							if(args[1].equalsIgnoreCase("unban"))	{
+								this.getChannelManager().getChannel(c.getName()).unbanUser(this.getUserManager().getUser(args[2]), user);
+								return true;
+							}
+							if(args[1].equalsIgnoreCase("disband"))	{
+								sender.sendMessage(ChatColor.YELLOW + "Command coming soon!");
+								return true;
+							}
+						}
+						else	{
+							sender.sendMessage(ChatColor.BLACK + "There are mysteries into which it behooves one not to delve too deeply...");
 							return true;
 						}
 					}
-					else	{
-						sender.sendMessage(ChatColor.RED + "You must be the channel owner to use this command!");
-						return true;
-					}
-					
 				}
 				
 				//Global powers

@@ -99,7 +99,7 @@ public class DatabaseManager {
 		// AFTER finalization >.> majority may change
 	}
 
-	public void loadPlayerData(User user) {
+	public void  (User user) {
 		// TODO find out exact order from Keiko
 		// Correction: Get Keiko to fill in all actual MySQL names
 		// and datatypes, can't seem to find the last puush of it.
