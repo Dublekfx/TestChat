@@ -20,6 +20,10 @@ public class TestChat extends JavaPlugin{
 		this.getServer().getPluginManager().registerEvents(listener, this);
 		//cm.loadAllChannels();
 		this.cm.createDefaultChannel();
+		
+		for(Player p : this.getServer().getOnlinePlayers())	{
+			TestChat.getInstance().getUserManager().newUser(p);
+		}
 	}
 	@Override
 	public void onDisable()	{
@@ -36,9 +40,7 @@ public class TestChat extends JavaPlugin{
 	public UserManager getUserManager()	{
 		return um;
 	}
-	public static TestChat getInstance()
-	{
+	public static TestChat getInstance()	{
 		return instance;
 	}
-
 }

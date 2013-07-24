@@ -66,28 +66,27 @@ public class DatabaseManager {
 	public void firstPlayerDataSave(User user) {
 		try {
 			PreparedStatement pst = connection.prepareStatement(
-					"INSERT INTO PlayerData(playerName, playerRank, class, aspect, mplanet, " +
+					"INSERT INTO PlayerData(playerName, class, aspect, mplanet, " +
 					"dplanet, towernum, sleepstate, currentChannel, isMute, isOnline, " +
 					"nickname, listening, channels, ip, LastLogin, timePlayed) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			pst.setString(1, user.getPlayer().getName());
-			pst.setString(2, null); // TODO need rank method
-			pst.setString(3, user.getClassType());
-			pst.setString(4, user.getAspect());
-			pst.setString(5, user.getMPlanet());
-			pst.setString(6, user.getDPlanet());
-			pst.setShort(7, user.getTowerNum());
-			pst.setBoolean(8, user.isSleeping());
-			pst.setString(9, null); // TODO currentChannel
-			pst.setString(10, null); // TODO isMute
-			pst.setBoolean(11, false); // TODO isOnline
-			pst.setString(12, null); // TODO nickname
-			pst.setString(13, null); // TODO listening
-			pst.setArray(14, null); // TODO channels
-			pst.setString(15, null); // TODO ip
-			pst.setString(16, null); // TODO lastLogin     Keiko, these two.. You may have to interpret
-			pst.setString(17, null); // TODO timePlayed    them from Strings/longs, no idea how to add enums
+			pst.setString(2, user.getClassType());
+			pst.setString(3, user.getAspect());
+			pst.setString(4, user.getMPlanet());
+			pst.setString(5, user.getDPlanet());
+			pst.setShort(6, user.getTowerNum());
+			pst.setBoolean(7, user.isSleeping());
+			pst.setString(8, null); // TODO currentChannel
+			pst.setString(9, null); // TODO isMute
+			pst.setBoolean(10, false); // TODO isOnline
+			pst.setString(11, null); // TODO nickname
+			pst.setString(12, null); // TODO listening
+			pst.setArray(13, null); // TODO channels
+			pst.setString(14, null); // TODO ip
+			pst.setString(15, null); // TODO lastLogin     Keiko, these two.. You may have to interpret
+			pst.setString(16, null); // TODO timePlayed    them from Strings/longs, no idea how to add enums
 
 			pst.executeUpdate();
 		} catch (SQLException e) {
@@ -115,8 +114,8 @@ public class DatabaseManager {
 			try {
 				user.setAspect(rs.getString("aspect"));
 				user.setClassType(rs.getString("class"));
-				user.setMPlanet(rs.getString("mplanet"));
-				user.setDPlanet(rs.getString("dplanet"));
+				user.setMPlanet(rs.getString("mPlanet"));
+				user.setDPlanet(rs.getString("dPlanet"));
 				user.setTowerNum(rs.getShort("tower"));
 			} catch (Exception e) {
 				// User may not be defined in the database
@@ -138,7 +137,7 @@ public class DatabaseManager {
 		try {
 			PreparedStatement pst = connection.prepareStatement(
 					"INSERT INTO ChatChannels(name, alias, channelType, listenAccess, " +
-					"sendAccess, owner, modList, muteList, banList, listening, approvedList) " +
+					"sendAccess, owner, modList, banList, listening, approvedList) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			pst.setString(1, null); // TODO name
@@ -148,10 +147,9 @@ public class DatabaseManager {
 			pst.setString(5, null); // TODO sendAccess
 			pst.setString(6, null); // TODO owner
 			pst.setArray(7, null); // TODO modList
-			pst.setArray(8, null); // TODO muteList
-			pst.setArray(9, null); // TODO banList
-			pst.setArray(10, null); // TODO listening
-			pst.setArray(11, null); // TODO apprivedList
+			pst.setArray(8, null); // TODO banList
+			pst.setArray(9, null); // TODO listening
+			pst.setArray(10, null); // TODO apprivedList
 
 			pst.executeUpdate();
 		} catch (SQLException e) {

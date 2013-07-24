@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.github.dublekfx.TestChat.TestChat;
-import com.github.dublekfx.TestChat.User;
-import com.github.dublekfx.TestChat.UserManager;
-
 public class ChannelManager {
 	//Writing this part from scratch
 	//Here be dragons...
@@ -15,7 +11,7 @@ public class ChannelManager {
 	
 	//Should be the interface between plugin and database. Do all loads and saves as infrequently as possible
 	
-	private Map<String, Channel> channelList = new HashMap<String, Channel>();
+	private static Map<String, Channel> channelList = new HashMap<String, Channel>();
 	
 	public ChannelManager()	{
 		//establish connection to db coughAdamcough
@@ -46,22 +42,19 @@ public class ChannelManager {
 		//VALUES (values go here, from parameters)
 		//channelList.put(name, channel);
 		Channel c = new NormalChannel(name, sendingAccess, listeningAccess, creator);
-		this.channelList.put(name, c);
+		ChannelManager.getChannelList().put(name, c);
 		Logger.getLogger("Minecraft").info("Channel" + c.getName() + "created: " + sendingAccess + " " + listeningAccess + " " + creator);
 	}
 	public void createDefaultChannel()	{
 		Channel c = new NormalChannel("#", AccessLevel.PUBLIC, AccessLevel.PUBLIC, "Dublek");
 		Logger.getLogger("Minecraft").info("Default chat channel created");
-		this.channelList.put("#", c);
-		for(User u : TestChat.getInstance().getUserManager().getUserList().values())	{
-			u.addListening(c);
-		}
+		ChannelManager.getChannelList().put("#", c);
 	}
 	public void dropChannel(String channelname)	{
-		this.channelList.remove(channelname);
+		ChannelManager.getChannelList().remove(channelname);
 		//DROP row?
 	}
-	public Map<String, Channel> getChannelList()	{
+	public static Map<String, Channel> getChannelList()	{
 		return channelList;
 	}
 	public Channel getChannel(String channelname)	{

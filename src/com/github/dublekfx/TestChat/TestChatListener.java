@@ -2,14 +2,12 @@ package com.github.dublekfx.TestChat;
 
 import java.util.logging.Logger;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.kitteh.tag.PlayerReceiveNameTagEvent;
 
 import com.github.dublekfx.TestChat.Channel.Channel;
 import com.github.dublekfx.TestChat.Channel.ChannelManager;
@@ -21,10 +19,19 @@ public class TestChatListener implements Listener	{
 		//So as long as the channel has a list of players, the User doesn't need to know what channels it's listening to.
 		
 		//if (pg.SELECT*FROMPlayerDataWHEREplayerName=event.getPlayer().getName() == null)
-		User.addPlayer(event.getPlayer());
-		User.getUser(event.getPlayer().getName()).setCurrent(TestChat.getInstance().getChannelManager().getChannel("#"));
-		//else
-		//User.login(event.getPlayer());
+		User u = User.getUser(event.getPlayer().getName());
+		if(u == null)	{
+			TestChat.getInstance().getUserManager().newUser(event.getPlayer());
+		}
+		else	{
+			u.login();
+			Channel c = ChannelManager.getChannelList().get("#");
+			u.setCurrent(c);
+			c.userJoin(u);
+			//for(Channel ch : u.getListening())	{
+			//	ch.userJoin(u);
+			//}
+		}
 	}
 	
 	@EventHandler (priority = EventPriority.HIGHEST)
@@ -44,7 +51,16 @@ public class TestChatListener implements Listener	{
 	
 	@EventHandler
 	public void onPlayerQuit (PlayerQuitEvent event)	{
-		User.logout(event.getPlayer());
+		User u = User.getUser(event.getPlayer().getName());
+		if(u == null)	{
+			TestChat.getInstance().getUserManager().newUser(event.getPlayer());
+		}
+		else	{
+			u.logout();
+			for(Channel c : u.getListening())	{
+				c.userLeave(u);
+			}
+		}
 	}
 	
 	/*@EventHandler

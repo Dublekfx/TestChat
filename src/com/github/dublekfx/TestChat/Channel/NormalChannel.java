@@ -3,9 +3,7 @@ package com.github.dublekfx.TestChat.Channel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -26,7 +24,7 @@ public class NormalChannel implements Channel	{
 	protected List<String> muteList = new ArrayList<String>();
 	protected List<String> banList = new ArrayList<String>();	
 
-	protected Set<User> listening = new HashSet<User>();
+	protected List<User> listening = new ArrayList<User>();
 	
 	public NormalChannel(String name, AccessLevel sendingAccess, AccessLevel listeningAccess, String creator)	{
 		this.name = name;
@@ -68,7 +66,7 @@ public class NormalChannel implements Channel	{
 	}
 
 	@Override
-	public Set<User> getListening() {
+	public List<User> getListening() {
 		return this.listening;
 	}
 

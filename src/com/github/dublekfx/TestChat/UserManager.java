@@ -3,6 +3,8 @@ package com.github.dublekfx.TestChat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.entity.Player;
+
 public class UserManager {
 	//Writing this part from scratch
 	//Here be dragons...
@@ -27,10 +29,10 @@ public class UserManager {
 	public User getUser(String name)	{
 		return this.userList.get(name);
 	}
-	public void newUser(String name, User u)	{
-		//INSERT INTO stuff
-		//VALUES morestuff
-		this.userList.put(name, u);
+	public void newUser(Player p)	{	//For first time logins
+		User u = new User(p);
+		this.userList.put(u.getName(), u);
+		//DatabaseManager.getDatabaseManager().firstPlayerDataSave(u);	
 	}
 	public void dropUser(User u)	{
 		//idek why I would want this. but here it is

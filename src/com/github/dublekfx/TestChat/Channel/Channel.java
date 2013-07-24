@@ -1,7 +1,6 @@
 package com.github.dublekfx.TestChat.Channel;
 
 import java.util.List;
-import java.util.Set;
 
 import com.github.dublekfx.TestChat.User;
 
@@ -11,7 +10,7 @@ public interface Channel {
 	public String getLeaveChatMessage(User sender);
 	public AccessLevel getSAcess();
 	public AccessLevel getLAcess();
-	public Set<User> getListening();
+	public List<User> getListening();
 	public ChannelType getType();
 	
 	public void setAlias(String name, User sender);

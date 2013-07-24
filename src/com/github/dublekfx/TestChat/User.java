@@ -21,41 +21,39 @@ public class User {
 	private short towerNum;
 	private boolean sleepState;
 	private Channel current;
+	private Set<Channel> listening = new HashSet<Channel>();
 	private boolean globalMute;
 	private boolean isOnline;
 	private String globalNick;
 	//also data for lastlogin and timeplayed
 	private String userIP;
-	
-	private Set<Channel> listening = new HashSet<Channel>();	//figure out how the hell to save this between runs
-		//also, do I even want/need this?
-		//yes. yes I do
-	
-	//public static Map<String, User> userList = new HashMap<String, User>(); //same for this. halp. plz
-	//either mysql will have lists, or I'm gonna have to split a largeass text string
-	//actually I'm moving this to the UserManager
-		
+			
 	public User(Player p)	{
 		this.pthis = p;
-		this.globalNick = pthis.getName();
+		this.pname = pthis.getName();
+		this.classType = "Heir";
+		this.aspect = "Breath";
+		this.mPlanet = "LOWAS";
+		this.dPlanet = "Prospit";
+		this.towerNum = (short) ((int)(8 * Math.random()));
+		this.sleepState = pthis.isSleeping();
+		this.current = TestChat.getInstance().getChannelManager().getChannel("#");			//Eventually this will point to a region channel
+		this.listening.add(TestChat.getInstance().getChannelManager().getChannel("#"));
 		this.globalMute = false;
-		TestChat.getInstance().getUserManager().getUserList().put(pthis.getName(), this);
-		//Channel?.joinChannelFirstTime(Region);
+		this.isOnline = pthis.isOnline();
+		this.globalNick = this.pname;
+		this.userIP = this.getUserIP();
+		Logger.getLogger("Minecraft").info("User created: " + this.getName());
 	}
 	
-	public static void addPlayer (Player p)	{ //Used for first-time logins
-		User u = new User(p);
-		Logger.getLogger("Minecraft").info("User created: " + u.getName());
-	}
-	public static void login(Player p)	{
-		TestChat.getInstance().getUserManager().getUserList().get(p.getName()).toggleOnline();
-		TestChat.getInstance().getUserManager().getUserList().get(p.getName()).current = TestChat.getInstance().getChannelManager().getChannel("#");
-	}
-	public static void logout (Player p)	{
-		TestChat.getInstance().getUserManager().getUserList().get(p.getName()).toggleOnline();
-	}
 	public static User getUser (String name)	{
 		return TestChat.getInstance().getUserManager().getUserList().get(name);
+	}
+	public void login()	{
+		this.setOnline(true);
+	}
+	public void logout()	{
+		this.setOnline(false);
 	}
 	public String getName()	{
 		return this.pthis.getName();
@@ -63,7 +61,6 @@ public class User {
 	public Player getPlayer()	{
 		return pthis;
 	}
-	
 	public String getNick()	{
 		return globalNick;
 	}
@@ -114,8 +111,8 @@ public class User {
 	public void setUserIP()	{
 		userIP = this.getPlayer().getAddress().getAddress().getHostAddress();
 	}
-	public void toggleMute()	{
-		if (this.globalMute = !this.globalMute)	{
+	public void setMute(boolean b)	{
+		if (b)	{
 			this.sendMessage(ChatColor.RED + "You have been muted in all channels.");
 		}
 		else	{
@@ -127,8 +124,8 @@ public class User {
 		return globalMute;
 	}
 
-	public void toggleOnline()	{
-		this.isOnline = this.isOnline ? false : true;
+	public void setOnline(boolean b)	{
+		this.isOnline = b;
 	}
 
 	public boolean isOnline()	{
@@ -211,8 +208,7 @@ public class User {
 			pthis.sendMessage(ChatColor.RED + "You are muted in channel " + ChatColor.GOLD + sendto.getName() + ChatColor.RED + "!");
 			return;
 		}
-		/*switch (sendto.getSAcess())
-		{
+		switch (sendto.getSAcess())		{
 		case PUBLIC:
 			break;
 		case PRIVATE:
@@ -222,14 +218,8 @@ public class User {
 			else	{
 				return;
 			}
-		case REQUEST:
-			if (sendto.getApprovedUsers().contains(sender.pname))	{
-				break;
-			}
-			else	{
-				return;
-			}
-		}*/
+		}
+		//Logger.getLogger("Minecraft").info(sender.getName() + " " + sendto.getName() + " " + outputmessage);
 		this.formatMessage(sender, sendto, outputmessage);
 	}
 	public void formatMessage (User sender, Channel c, String s)	{
@@ -259,9 +249,9 @@ public class User {
 		}
 		output = output + this.getOutputNameF(sender, isThirdPerson);
 		output = output + s;
+		sender.getPlayer().sendMessage(output);			//This bypass will remain as long as the stupid thing can't tell what it's listening to
 		
-		
-		c.sendToAll(sender, s);
+		c.sendToAll(sender, output);
 		
 	}
 	public void sendMessageFromChannel (String s, Channel c)	{	//final output, sends message to user
@@ -274,21 +264,23 @@ public class User {
 	
 	public String getOutputChannelF(User sender, Channel channel)	{	//colors for [$channel] applied here
 		//SburbChat code. Handle with care
+		String out = "";
 		
 		ChatColor color = ColorDef.CHATRANK_MEMBER;
-		sender.pthis.sendMessage(channel.getOwner());
 		if (channel.getOwner().equalsIgnoreCase(sender.getName()))	{
 			color = ColorDef.CHATRANK_OWNER;
 		}
 		else if (channel.getModList().contains(sender.getName()))	{
 			color = ColorDef.CHATRANK_MOD;
 		}
-
-		return ChatColor.WHITE + "[" + color + channel.getName() + ChatColor.WHITE + "] ";
+		out = ChatColor.WHITE + "[" + color + channel.getName() + ChatColor.WHITE + "] ";
+		//sender.getPlayer().sendMessage(out);
+		return out;
 	}
 	
 	public String getOutputNameF(User sender, boolean isThirdPerson)	{	//colors for <$name> applied here
 		//	SburbChat code. Handle with care
+		String out = "";
 		
 		String outputName = sender.pname;
 		if(!(sender.globalNick.equals(sender.pname)))	{
@@ -320,7 +312,9 @@ public class User {
 		else if (sender.pthis.getWorld().getName().equalsIgnoreCase("furthestring"))
 			colorW = ColorDef.WORLD_FURTHESTRING;
 		
-		return (isThirdPerson ? "> " : colorW + "<") + colorP + outputName + ChatColor.WHITE + (isThirdPerson ? ": " : colorW + "> " + ChatColor.WHITE);		
+		out = (isThirdPerson ? "> " : colorW + "<") + colorP + outputName + ChatColor.WHITE + (isThirdPerson ? ": " : colorW + "> " + ChatColor.WHITE);		
+		//sender.getPlayer().sendMessage(out);
+		return out;
 	}
 
 	public void sendMessage(String string) {
