@@ -58,7 +58,12 @@ public class ChannelManager {
 		return channelList;
 	}
 	public Channel getChannel(String channelname)	{
-		return channelList.get(channelname);
+		if(channelList.containsKey(channelname))	{
+			return channelList.get(channelname);
+		}
+		else	{
+			return null;
+		}
 	}
 	public boolean isValidChannel(String channelname)	{
 		return channelList.containsValue(channelname);

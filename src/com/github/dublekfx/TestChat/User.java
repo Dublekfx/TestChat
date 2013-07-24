@@ -139,6 +139,9 @@ public class User {
 		}
 		this.current = c;
 	}
+	public Channel getCurrent()	{
+		return current;
+	}
 
 	public boolean addListening(Channel c)
 	{
@@ -319,6 +322,10 @@ public class User {
 
 	public void sendMessage(String string) {
 		//Not sure if I even need this...
-		
+	}
+	public String toString()	{		//For /whois usage mainly
+		String s = "";
+		return s;
 	}
 }
+
