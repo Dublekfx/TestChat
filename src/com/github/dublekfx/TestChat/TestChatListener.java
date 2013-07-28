@@ -57,8 +57,8 @@ public class TestChatListener implements Listener	{
 		}
 		else	{
 			u.logout();
-			for(Channel c : u.getListening())	{
-				c.userLeave(u);
+			for(String s : u.getListening())	{
+				TestChat.getInstance().getChannelManager().getChannel(s).userLeave(u);
 			}
 		}
 	}

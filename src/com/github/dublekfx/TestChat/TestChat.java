@@ -131,8 +131,8 @@ public class TestChat extends JavaPlugin {
 				}
 				if(args[0].equalsIgnoreCase("list"))	{	//listListening
 					String clist = ChatColor.YELLOW + "Currently pestering: ";
-					for (Channel c : user.getListening())	{
-						clist += c.getName() + " ";
+					for (String s : user.getListening())	{
+						clist += s + " ";
 					}
 					sender.sendMessage(clist);
 					return true;
@@ -164,7 +164,7 @@ public class TestChat extends JavaPlugin {
 								"sendAccess and listenAccess must be either PUBLIC or PRIVATE");
 						return true;
 					}
-					this.getChannelManager().createNewChannel(args[1], AccessLevel.valueOf(args[2]), AccessLevel.valueOf(args[3]), user.getName());
+					this.getChannelManager().createNewChannel(args[1], AccessLevel.valueOf(args[2]), AccessLevel.valueOf(args[3]), user.getPlayerName());
 					return true;
 				}
 				if(args[0].equalsIgnoreCase("whois"))	{
@@ -218,10 +218,10 @@ public class TestChat extends JavaPlugin {
 							String listenerList = ChatColor.YELLOW + "Channel members: ";
 							for(User u : c.getListening()){
 								if(u.getCurrent().equals(c))	{
-									listenerList += ChatColor.GREEN + u.getName() + " ";
+									listenerList += ChatColor.GREEN + u.getPlayerName() + " ";
 								}
 								else	{
-									listenerList += ChatColor.YELLOW + u.getName() + " ";
+									listenerList += ChatColor.YELLOW + u.getPlayerName() + " ";
 								}
 							}
 							sender.sendMessage(listenerList);
@@ -273,7 +273,7 @@ public class TestChat extends JavaPlugin {
 							return true;
 						}
 						if(args[1].equalsIgnoreCase("rmnick"))	{
-							victim.setNick(victim.getName());
+							victim.setNick(victim.getPlayerName());
 							return true;
 						}
 					}
