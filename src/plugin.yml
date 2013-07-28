@@ -1,3 +1,19 @@
 name: TestChat
 main: com.github.dublekfx.TestChat.TestChat
 version: 0.1
+commands:
+  o:
+    description: Be Doc Scratch
+    usage: Try as you might, you cannot be Doc Scratch!
+  sban:
+    description: SuperBan! Handle with care
+    usage: /sban <user> <reason>
+  whois:
+    description: toString() from the User class
+    usage: /whois <user>
+  scmute:
+    description: Global mute shortcut. Cuz I'm lazy
+    usage: /scmute <user>
+  sc:
+    description: The keys to the kingdom lie within
+    usage: /sc stuff

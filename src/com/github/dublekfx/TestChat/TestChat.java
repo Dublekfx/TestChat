@@ -1,6 +1,5 @@
 package com.github.dublekfx.TestChat;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -88,9 +87,12 @@ public class TestChat extends JavaPlugin {
 			}
 			else	{	//ingame commands
 				User user = this.getUserManager().getUser(sender.getName());
+				if(args.length == 0)	{
+					return false;
+				}
 				if(args[0].equalsIgnoreCase("c"))	{	//setChannel
 					if(args.length == 1)	{
-					sender.sendMessage(ChatColor.YELLOW + "Set current channel:\n\t/sc c <$channelname>");
+						sender.sendMessage(ChatColor.YELLOW + "Set current channel:\n\t/sc c <$channelname>");
 					return true;
 					}
 					try	{
@@ -177,7 +179,25 @@ public class TestChat extends JavaPlugin {
 							"\t/sc channel setalias <$alias>\tSet an alias for the channel\n" +
 							"\t/sc channel rmalias\tRemove the channel alias\n" +
 							"\t/sc channel getListeners\tList all users currently listening to this channel";
-					if(user.getCurrent().getModList().contains(user.getName()) || isHelper)	{
+					String helpOwner = ChatColor.YELLOW + "Channel Owner commands:\n" +
+							"\t/sc channel mod <add/remove> <$user>\tAdd or remove a channelMod\n" +
+							"\t/sc channel <ban/unban> <$user>\t(Un)bans a user from the channel\n" +
+							"\t/sc disband\tDisband coming soon!";
+					if(c.isMod(user) || isHelper)	{
+						if(args.length == 1){
+							if(c.isMod(user) || isHelper)	{
+								sender.sendMessage(helpMod);
+								return true;
+							}
+							else if(c.isOwner(user) || isMod)	{
+								sender.sendMessage(helpOwner);
+								return true;
+							}
+							else	{
+								sender.sendMessage(ChatColor.BLACK + "There are mysteries into which it behooves one not to delve too deeply...");
+								return true;
+							}
+						}
 						if(args[1].equalsIgnoreCase("kick"))	{
 							c.kickUser(this.getUserManager().getUser(args[2]), user);
 							return true;
@@ -188,22 +208,26 @@ public class TestChat extends JavaPlugin {
 						}
 						if(args[1].equalsIgnoreCase("setalias"))	{
 							c.setAlias(args[2], user);
+							return true;
 						}
 						if(args[1].equalsIgnoreCase("rmalias"))	{
 							c.removeAlias(user);
+							return true;
 						}
 						if(args[1].equalsIgnoreCase("getlisteners"))	{
-							
-						}					
-						String helpOwner = ChatColor.YELLOW + "Channel Owner commands:\n" +
-								"\t/sc channel mod <add/remove> <$user>\tAdd or remove a channelMod\n" +
-								"\t/sc channel <ban/unban> <$user>\t(Un)bans a user from the channel\n" +
-								"\t/sc disband\tDisband coming soon!";
-						if(c.getOwner().equalsIgnoreCase(user.getName()) || isMod)	{
-							if(args.length == 1){
-								sender.sendMessage(helpOwner);
-								return true;
+							String listenerList = ChatColor.YELLOW + "Channel members: ";
+							for(User u : c.getListening()){
+								if(u.getCurrent().equals(c))	{
+									listenerList += ChatColor.GREEN + u.getName() + " ";
+								}
+								else	{
+									listenerList += ChatColor.YELLOW + u.getName() + " ";
+								}
 							}
+							sender.sendMessage(listenerList);
+							return true;
+						}
+						if(c.isOwner(user) || isMod)	{
 							if(args[1].equalsIgnoreCase("mod"))	{
 								if(args[2].equalsIgnoreCase("add"))	{
 									c.addMod(this.getUserManager().getUser(args[3]), user);
@@ -229,6 +253,27 @@ public class TestChat extends JavaPlugin {
 						}
 						else	{
 							sender.sendMessage(ChatColor.BLACK + "There are mysteries into which it behooves one not to delve too deeply...");
+							return true;
+						}
+					}
+				}
+				if(args[0].equalsIgnoreCase("global"))	{
+					if(isMod || sender.isOp())	{
+						User victim = this.getUserManager().getUser(this.getServer().getPlayer(args[2]).getName());
+						if(args[1].equalsIgnoreCase("mute"))	{
+							victim.setMute(true);
+							return true;
+						}
+						if(args[1].equalsIgnoreCase("unmute"))	{
+							victim.setMute(false);
+							return true;
+						}
+						if(args[1].equalsIgnoreCase("setnick"))	{
+							victim.setNick(args[3]);
+							return true;
+						}
+						if(args[1].equalsIgnoreCase("rmnick"))	{
+							victim.setNick(victim.getName());
 							return true;
 						}
 					}
@@ -260,8 +305,8 @@ public class TestChat extends JavaPlugin {
 				//Mod powers
 				//Mute							//sc global mute <player>
 				//unmute						//sc global unmute <player>
-				//setnick						//sc global nick set <player>
-				//rmnick						//sc global nick remove <player>
+				//setnick						//sc global setnick <player> <nick>
+				//rmnick						//sc global rmnick <player>
 			}
 			
 		}

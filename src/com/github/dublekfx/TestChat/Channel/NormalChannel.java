@@ -161,6 +161,10 @@ public class NormalChannel implements Channel	{
 	public String getOwner()	{
 		return this.owner;
 	}
+	@Override
+	public boolean isOwner(User user)	{
+		return user.getName().equalsIgnoreCase(owner);
+	}
 
 	@Override
 	public void addMod(User user, User sender) {
@@ -265,6 +269,11 @@ public class NormalChannel implements Channel	{
 			sender.sendMessage(ChatColor.YELLOW + user.getName() + ChatColor.RED + " is not banned in " + ChatColor.GOLD + this.name + ChatColor.RED + "!");
 		}		
 	}
+	@Override
+	public List<String>	getBanList()	{
+		return banList;
+	}
+	@Override
 	public boolean isBanned(User user)	{
 		return banList.contains(user.getName());
 	}

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.github.dublekfx.TestChat.DatabaseManager;
+
 public class ChannelManager {
 	//Writing this part from scratch
 	//Here be dragons...
@@ -14,10 +16,6 @@ public class ChannelManager {
 	private static Map<String, Channel> channelList = new HashMap<String, Channel>();
 	
 	public ChannelManager()	{
-		//establish connection to db coughAdamcough
-	}
-	public void disconnectFromDatabase()	{
-		//idk if this is even necessary, but i'll leave it here just in case
 	}
 	
 	public void loadAllChannels()	{
@@ -26,8 +24,11 @@ public class ChannelManager {
 		//new Channel(column info goes here)
 	}
 	public void loadChannel(String channelName)	{
-		//SELECT * FROM ChatChannels WHERE name=channelName
-		//new Channel(you get the idea already)
+		DatabaseManager.getDatabaseManager().loadChannelData(channelName);
+//		Channel c = new NormalChannel(name, sendingAccess, listeningAccess, creator);
+//		ChannelManager.getChannelList().put(name, c);
+
+
 	}
 	public void saveAllChannels()	{
 		//foreach channel

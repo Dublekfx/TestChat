@@ -40,4 +40,6 @@ public interface Channel {
 	public void disband(User sender);
 	
 	public void sendToAll(User sender, String message);
+	List<String> getBanList();
+	boolean isOwner(User user);
 }

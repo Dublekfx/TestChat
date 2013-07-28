@@ -20,8 +20,8 @@ public class UserManager {
 		//new User(datagoethhere)
 		this.userList.put(name, u);
 	}
-	public void saveUserToDatabase(String name)	{
-		//do the UPDATE thingy here too
+	public void saveUserToDatabase(User u)	{
+		DatabaseManager.getDatabaseManager().savePlayerData(u);
 	}
 	public Map<String, User> getUserList()	{
 		return userList;

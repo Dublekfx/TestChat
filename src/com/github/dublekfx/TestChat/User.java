@@ -1,6 +1,8 @@
 package com.github.dublekfx.TestChat;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -21,7 +23,7 @@ public class User {
 	private short towerNum;
 	private boolean sleepState;
 	private Channel current;
-	private Set<Channel> listening = new HashSet<Channel>();
+	private List<Channel> listening = new ArrayList<Channel>();
 	private boolean globalMute;
 	private boolean isOnline;
 	private String globalNick;
@@ -30,6 +32,9 @@ public class User {
 			
 	public User(Player p)	{
 		this.pthis = p;
+		Logger.getLogger("Minecraft").info("User created: " + this.getName());
+	}
+	public void newUser(User u)	{
 		this.pname = pthis.getName();
 		this.classType = "Heir";
 		this.aspect = "Breath";
@@ -43,7 +48,6 @@ public class User {
 		this.isOnline = pthis.isOnline();
 		this.globalNick = this.pname;
 		this.userIP = this.getUserIP();
-		Logger.getLogger("Minecraft").info("User created: " + this.getName());
 	}
 	
 	public static User getUser (String name)	{
@@ -181,7 +185,7 @@ public class User {
 		}
 	}
 
-	public Set<Channel> getListening()	{
+	public List<Channel> getListening()	{
 		return listening;
 	}
 
