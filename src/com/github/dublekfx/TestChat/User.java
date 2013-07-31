@@ -1,11 +1,10 @@
 package com.github.dublekfx.TestChat;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -13,8 +12,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.github.dublekfx.TestChat.Channel.Channel;
 
 public class User {
-	
-	private Player pthis;
+
 	private String pname;
 	private String classType;
 	private String aspect;
@@ -22,30 +20,29 @@ public class User {
 	private String dPlanet;
 	private short towerNum;
 	private boolean sleepState;
-	private Channel current;
-	private List<Channel> listening = new ArrayList<Channel>();
+	private String current;
+	private List<String> listening = new ArrayList<String>();
 	private boolean globalMute;
 	private boolean isOnline;
 	private String globalNick;
 	//also data for lastlogin and timeplayed
 	private String userIP;
-			
-	public User(Player p)	{
-		this.pthis = p;
-		Logger.getLogger("Minecraft").info("User created: " + this.getName());
+
+	public User(String player)	{
+		this.pname = player;
+		Logger.getLogger("Minecraft").info("User created: " + this.getPlayerName());
 	}
 	public void newUser(User u)	{
-		this.pname = pthis.getName();
 		this.classType = "Heir";
 		this.aspect = "Breath";
 		this.mPlanet = "LOWAS";
 		this.dPlanet = "Prospit";
 		this.towerNum = (short) ((int)(8 * Math.random()));
-		this.sleepState = pthis.isSleeping();
-		this.current = TestChat.getInstance().getChannelManager().getChannel("#");			//Eventually this will point to a region channel
-		this.listening.add(TestChat.getInstance().getChannelManager().getChannel("#"));
+		this.sleepState = this.getPlayer().isSleeping();
+		this.current = "#";			//Eventually this will point to a region channel
+		this.listening.add("#");
 		this.globalMute = false;
-		this.isOnline = pthis.isOnline();
+		this.isOnline = this.getPlayer().isOnline();
 		this.globalNick = this.pname;
 		this.userIP = this.getUserIP();
 	}
@@ -59,11 +56,11 @@ public class User {
 	public void logout()	{
 		this.setOnline(false);
 	}
-	public String getName()	{
-		return this.pthis.getName();
+	public String getPlayerName()	{
+		return this.pname;
 	}
 	public Player getPlayer()	{
-		return pthis;
+		return Bukkit.getPlayerExact(this.pname);
 	}
 	public String getNick()	{
 		return globalNick;
@@ -138,13 +135,13 @@ public class User {
 	
 	public void setCurrent(Channel c)	{
 		if(c.isBanned(this))	{
-			pthis.sendMessage(ChatColor.RED + "You are banned in channel " + ChatColor.GOLD + c.getName() + ChatColor.RED + "!");
+			this.getPlayer().sendMessage(ChatColor.RED + "You are banned in channel " + ChatColor.GOLD + c.getName() + ChatColor.RED + "!");
 			return;
 		}
-		this.current = c;
+		this.current = c.getName();
 	}
 	public Channel getCurrent()	{
-		return current;
+		return TestChat.getInstance().getChannelManager().getChannel(current);
 	}
 
 	public boolean addListening(Channel c)
@@ -153,12 +150,12 @@ public class User {
 			return false;
 		}
 		if(c.isBanned(this))	{
-			pthis.sendMessage(ChatColor.RED + "You are banned in channel " + ChatColor.GOLD + c.getName() + ChatColor.RED + "!");
+			this.getPlayer().sendMessage(ChatColor.RED + "You are banned in channel " + ChatColor.GOLD + c.getName() + ChatColor.RED + "!");
 			return false;
 		}
 		if (!this.listening.contains(c))	{
 			if (c.userJoin(this))	{
-				this.listening.add(c);
+				this.listening.add(c.getName());
 				this.sendMessage(ChatColor.GREEN + "Now listening to channel " + ChatColor.GOLD + c.getName() + ChatColor.GREEN + ".");
 				return true;
 			}
@@ -185,7 +182,7 @@ public class User {
 		}
 	}
 
-	public List<Channel> getListening()	{
+	public List<String> getListening()	{
 		return listening;
 	}
 
@@ -201,7 +198,7 @@ public class User {
 		User sender = User.getUser(event.getPlayer().getName());
 		String fullmsg = event.getMessage();
 		String outputmessage = fullmsg;
-		Channel sendto = sender.current;
+		Channel sendto = TestChat.getInstance().getChannelManager().getChannel(sender.current);
 		
 		if(fullmsg.indexOf("@") == 0)	{	//Check for alternate channel destination
 			int space = fullmsg.indexOf(" ");
@@ -212,7 +209,7 @@ public class User {
 			}
 		}
 		if (sender.globalMute)	{
-			pthis.sendMessage(ChatColor.RED + "You are muted in channel " + ChatColor.GOLD + sendto.getName() + ChatColor.RED + "!");
+			sender.getPlayer().sendMessage(ChatColor.RED + "You are muted in channel " + ChatColor.GOLD + sendto.getName() + ChatColor.RED + "!");
 			return;
 		}
 		switch (sendto.getSAcess())		{
@@ -264,7 +261,7 @@ public class User {
 	public void sendMessageFromChannel (String s, Channel c)	{	//final output, sends message to user
 		//alert for if its player's name is applied here i.e. {!}
 		//then just send it and be done!
-		this.pthis.sendMessage(s);
+		this.getPlayer().sendMessage(s);
 	}
 	
 	//Here begins output formatting. Abandon all hope ye who enter
@@ -274,10 +271,10 @@ public class User {
 		String out = "";
 		
 		ChatColor color = ColorDef.CHATRANK_MEMBER;
-		if (channel.getOwner().equalsIgnoreCase(sender.getName()))	{
+		if (channel.getOwner().equalsIgnoreCase(sender.getPlayerName()))	{
 			color = ColorDef.CHATRANK_OWNER;
 		}
-		else if (channel.getModList().contains(sender.getName()))	{
+		else if (channel.getModList().contains(sender.getPlayerName()))	{
 			color = ColorDef.CHATRANK_MOD;
 		}
 		out = ChatColor.WHITE + "[" + color + channel.getName() + ChatColor.WHITE + "] ";
@@ -297,26 +294,26 @@ public class User {
 		ChatColor colorP = ColorDef.RANK_HERO;
 		ChatColor colorW = ColorDef.DEFAULT;
 
-		if (sender.pthis.hasPermission("group.horrorterror"))
+		if (sender.getPlayer().hasPermission("group.horrorterror"))
 			colorP = ColorDef.RANK_ADMIN;
-		else if (sender.pthis.hasPermission("group.denizen"))
+		else if (sender.getPlayer().hasPermission("group.denizen"))
 			colorP = ColorDef.RANK_MOD;
-		else if (sender.pthis.hasPermission("group.helper"))
+		else if (sender.getPlayer().hasPermission("group.helper"))
 			colorP = ColorDef.RANK_HELPER;
-		else if (sender.pthis.hasPermission("group.godtier"))
+		else if (sender.getPlayer().hasPermission("group.godtier"))
 			colorP = ColorDef.RANK_GODTIER;
-		else if (sender.pthis.hasPermission("group.donator"))
+		else if (sender.getPlayer().hasPermission("group.donator"))
 			colorP = ColorDef.RANK_DONATOR;
 		
-		if (sender.pthis.getWorld().getName().equalsIgnoreCase("earth"))
+		if (sender.getPlayer().getWorld().getName().equalsIgnoreCase("earth"))
 			colorW = ColorDef.WORLD_EARTH;
-		else if (sender.pthis.getWorld().getName().equalsIgnoreCase("innercircle"))
+		else if (sender.getPlayer().getWorld().getName().equalsIgnoreCase("innercircle"))
 			colorW = ColorDef.WORLD_INNERCIRCLE;
-		else if (sender.pthis.getWorld().getName().equalsIgnoreCase("outercircle"))
+		else if (sender.getPlayer().getWorld().getName().equalsIgnoreCase("outercircle"))
 			colorW = ColorDef.WORLD_OUTERCIRCLE;
-		else if (sender.pthis.getWorld().getName().equalsIgnoreCase("medium"))
+		else if (sender.getPlayer().getWorld().getName().equalsIgnoreCase("medium"))
 			colorW = ColorDef.WORLD_MEDIUM;
-		else if (sender.pthis.getWorld().getName().equalsIgnoreCase("furthestring"))
+		else if (sender.getPlayer().getWorld().getName().equalsIgnoreCase("furthestring"))
 			colorW = ColorDef.WORLD_FURTHESTRING;
 		
 		out = (isThirdPerson ? "> " : colorW + "<") + colorP + outputName + ChatColor.WHITE + (isThirdPerson ? ": " : colorW + "> " + ChatColor.WHITE);		

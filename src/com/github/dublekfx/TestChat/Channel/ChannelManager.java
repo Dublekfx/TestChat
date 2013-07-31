@@ -23,8 +23,8 @@ public class ChannelManager {
 		//foreach entry
 		//new Channel(column info goes here)
 	}
-	public void loadChannel(String channelName)	{
-		DatabaseManager.getDatabaseManager().loadChannelData(channelName);
+	public void loadChannels()	{
+		DatabaseManager.getDatabaseManager().loadAllChannelData();
 //		Channel c = new NormalChannel(name, sendingAccess, listeningAccess, creator);
 //		ChannelManager.getChannelList().put(name, c);
 

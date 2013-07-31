@@ -24,15 +24,18 @@ public interface Channel {
 	
 	public void setOwner(String name, User sender);
 	public String getOwner();
+	public void loadMod(String user);
 	public void addMod(User user, User sender);
 	public void removeMod(User user, User sender);
 	public List<String>	getModList();
 	public boolean isMod(User user);
 	
 	public void kickUser(User user, User sender);
+	public void loadBan(String user);
 	public void banUser(User user, User sender);
 	public void unbanUser(User user, User sender);
 	public boolean isBanned(User user);
+	public void loadApproval(String user);
 	public void approveUser(User user, User sender);
 	public void deapproveUser(User user, User sender);
 	public List<String> getApprovedUsers();

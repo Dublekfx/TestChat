@@ -21,7 +21,7 @@ public class UserManager {
 		this.userList.put(name, u);
 	}
 	public void saveUserToDatabase(User u)	{
-		DatabaseManager.getDatabaseManager().savePlayerData(u);
+		DatabaseManager.getDatabaseManager().saveUserData(u);
 	}
 	public Map<String, User> getUserList()	{
 		return userList;
@@ -30,8 +30,8 @@ public class UserManager {
 		return this.userList.get(name);
 	}
 	public void newUser(Player p)	{	//For first time logins
-		User u = new User(p);
-		this.userList.put(u.getName(), u);
+		User u = new User(p.getName());
+		this.userList.put(u.getPlayerName(), u);
 		//DatabaseManager.getDatabaseManager().firstPlayerDataSave(u);	
 	}
 	public void dropUser(User u)	{
